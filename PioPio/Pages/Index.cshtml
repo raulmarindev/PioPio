@@ -1,10 +1,16 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="jumbotron">
+    <h1>LINQ to Twitter</h1>
+    <p class="lead">LINQ to Twitter is an open-source 3rd party library for working with the Twitter API. Please select a menu item to view demos for how LINQ to Twitter supports each category of the Twitter API.</p>
+    <p><a href="https://github.com/JoeMayo/LinqToTwitter" class="btn btn-primary btn-large">Learn more &raquo;</a></p>
 </div>
+
+@foreach (var tweet in Model.Tweets)
+{
+    <div><span>@tweet.UserScreenName</span><span> <> Likes: @tweet.FavoriteCount <> </span><a href=@tweet.Url>@tweet.Text</a></div>
+}
