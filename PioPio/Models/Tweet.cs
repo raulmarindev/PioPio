@@ -1,10 +1,27 @@
-﻿namespace PioPio.Models
+﻿using System;
+
+namespace PioPio.Models
 {
     public class Tweet
     {
-        public string Text { get; set; }
+        public string Text { get; set; } = string.Empty;
+
         public int? FavoriteCount { get; set; }
-        public string UserScreenName { get; set; }
-        public string Url { get; set; }
+
+        public int? RetweetCount { get; set; }
+
+        public string UserScreenName { get; set; } = string.Empty;
+
+        public string Url { get; set; } = string.Empty;
+
+        public string UserProfileImageUrl { get; set; } = string.Empty;
+
+        public DateTime CreatedAt { get; set; }
+
+        public string ImageUrl { get; set; } = string.Empty;
+
+        public string ImageAlt { get; set; } = string.Empty;
+
+        public string UserProfileUrl { get; set; } = string.Empty;
     }
 }
