@@ -16,6 +16,7 @@ namespace PioPio.Pages
 {
     public class IndexModel : PageModel
     {
+        private const int TweetTextMaxLength = 100;
         private readonly ILogger<IndexModel> _logger;
         private readonly IConfiguration _configuration;
         private readonly TwitterContext _twitterContext;
@@ -55,7 +56,7 @@ namespace PioPio.Pages
 
         private async Task<IEnumerable<Tweet>> GetHomeTimelineTweets()
         {
-            const int MaxTotalResults = 800;
+            const int MaxTotalResults = 10;
 
             // sinceID is the oldest id you already have for this search term
             // CurrentMaxId is used after the first query to track current session
@@ -95,13 +96,23 @@ namespace PioPio.Pages
             return combinedTweets
                         .OrderByDescending(s => s.FavoriteCount)
                         .Select(s =>
-                            new Tweet
+                        {
+                            var mediaEntities = s.Entities.MediaEntities;
+
+                            return new Tweet
                             {
                                 FavoriteCount = s.FavoriteCount,
-                                Text = s.Text,
+                                Text = $"{s.Text.Substring(0, Math.Min(TweetTextMaxLength, s.Text.Length))}{(s.Text.Length > TweetTextMaxLength ? "..." : string.Empty)}",
                                 UserScreenName = s.User.ScreenNameResponse,
-                                Url = $"https://twitter.com/{s.User.ScreenNameResponse}/status/{s.StatusID}"
-                            });
+                                Url = $"https://twitter.com/{s.User.ScreenNameResponse}/status/{s.StatusID}",
+                                CreatedAt = s.CreatedAt,
+                                RetweetCount = s.RetweetCount,
+                                UserProfileImageUrl = s.User.ProfileImageUrl.Replace("http:", "https:"),
+                                ImageUrl = mediaEntities.Any() ? mediaEntities[0].MediaUrl.Replace("http:", "https:") : "/images/twitter.png",
+                                ImageAlt = mediaEntities.Any() ? mediaEntities[0].AltText : string.Empty,
+                                UserProfileUrl = $"https://twitter.com/{s.User.ScreenNameResponse}"
+                            };
+                        });
         }
 
         private static Expression<Func<Status, bool>> FilterStatuses(ulong? maxID)
